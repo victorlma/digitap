@@ -9,29 +9,68 @@
 #define minY    20
 #define wordListPath    "word.list"
 
-
 int    winX, winY;
 
+typedef enum {
+    MENU,
+    GAME,
+    MODES_COUNT
+} modes;
+
 typedef struct gmst {
-    char    ch;
+    int    ch;
+    modes     mode;
+    bool     isInit;
 
 } gmst_t ;
 
+typedef struct wordList {
+    size_t  size;
+    char    *string;
+    size_t  posSize;
+    size_t  *positions;
+} wordList_t;
 
-char* readWordList()
+bool makeWordList(wordList_t *words)
 {
    int fdWordList = open(wordListPath, O_RDONLY);
    struct stat statWordList;
    stat(wordListPath, &statWordList);
-   char* wordList = malloc(statWordList.st_size);
-   read(fdWordList, wordList, statWordList.st_size);
 
-   return wordList;
+   words->size = statWordList.st_size;
+   words->string = malloc(words->size);
+   read(fdWordList, words->string, words->size);
+   close(fdWordList);
+   words->posSize = 1;
+
+   for (size_t i = 0; i < words->size; ++i){
+
+       if (words->string[i] == '\n'){
+
+           words->posSize += 1;
+       }
+   }
+
+   words->positions = malloc(words->posSize*sizeof(size_t));
+   words->positions[0] = 0;
+   size_t posCursor = 1;
+
+   for (size_t i = 0; i < words->size; ++i){
+
+       if (words->string[i] == '\n'){
+
+           words->positions[posCursor] = i;
+           ++posCursor;
+       }
+   }
+
+
+   return true;
 }
 
 int checkScrSize()
 {
-        getmaxyx(stdscr, winY,winX); 
+        getmaxyx(stdscr, winY,winX);
         if (winX < minX || winY < minY)
         {
             clear();
