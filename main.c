@@ -81,30 +81,88 @@ int checkScrSize()
         return true;
 }
 
+
+void processMenu(gmst_t *game)
+{
+    if (game->isInit){
+            game->ch = getch();
+    }
+    if(!game->isInit){
+        game->ch = 0;
+        game->isInit = true;
+    }
+    if (game->ch == '\n') {
+        game->mode = GAME;
+        game->isInit = false;
+    }
+}
+
+void drawMenu()
+{
+    clear();
+    mvprintw(0, 20,"Press ENTER to Begin");
+}
+
+void processGame(gmst_t *game)
+{
+    if (game->isInit){
+            game->ch = getch();
+    }
+    if(!game->isInit){
+        game->ch = 0;
+        game->isInit = true;
+    }
+    if (game->ch == '\n') {
+        game->mode = MENU;
+        game->isInit = false;
+    }
+}
+
+void drawGame(gmst_t *game)
+{
+    clear();
+    mvprintw(0, 20, "GAME: %c",game->ch);
+}
 int main(void)
 {
-
     bool shouldClose = false;
 
     gmst_t  game = {
-        .ch = 0
+        .ch = 0,
+        .mode = MENU,
+        .isInit = false
     };
-    char* wordList = readWordList();
-    initscr();
-    noecho();
-    cbreak();
-    keypad(stdscr, TRUE);
 
+    wordList_t  words = {0};
+
+    if(!makeWordList(&words)){
+
+    }
+
+    initscr();
+    cbreak();
+    noecho();
     while(!shouldClose){
-        
-        game.ch = getch();
+
         if (game.ch == 27){
             shouldClose = 1;
         }
 
         if (checkScrSize())
         {
-            clear();
+            switch(game.mode){
+                case MENU:
+                    processMenu(&game);
+                    drawMenu();
+                    break;
+
+                case GAME:
+                    processGame(&game);
+                    drawGame(&game);
+                    break;
+                default:
+                    break;
+            }
         }
         refresh();
     }
