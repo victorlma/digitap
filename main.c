@@ -1,7 +1,6 @@
 #include "stdlib.h"
-#include "stdint.h"
 #include "ncurses.h"
-
+#include "stdbool.h"
 #include "fcntl.h"
 #include "unistd.h"
 #include "sys/stat.h"
