@@ -18,19 +18,21 @@ typedef enum {
     MODES_COUNT
 } modes;
 
-typedef struct gmst {
-    int    ch;
-    modes     mode;
-    bool     isInit;
-
-} gmst_t ;
-
 typedef struct wordList {
     size_t  size;
     char    *string;
     size_t  posSize;
     size_t  *positions;
+    size_t  cwBegin;
+    size_t  cwEnd;
 } wordList_t;
+
+typedef struct gmst {
+    int    ch;
+    modes     mode;
+    bool     isInit;
+    wordList_t words;
+} gmst_t ;
 
 bool makeWordList(wordList_t *words)
 {
@@ -134,9 +136,8 @@ int main(void)
         .isInit = false
     };
 
-    wordList_t  words = {0};
 
-    if(!makeWordList(&words)){
+    if(!makeWordList(&game.words)){
 
     }
 
