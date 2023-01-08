@@ -113,6 +113,15 @@ void drawMenu()
     mvprintw(0, 20,"Press ENTER to Begin");
 }
 
+
+void setupNextWord(wordList_t *words)
+{
+    int wBegin = rand() % words->posSize;
+    wBegin = wBegin % 2 == 0 ? wBegin : wBegin -1;
+    words->cwBegin = wBegin;
+    words->cwEnd = wBegin +1;
+}
+
 void processGame(gmst_t *game)
 {
     if (game->isInit){
