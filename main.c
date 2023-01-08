@@ -25,6 +25,7 @@ typedef struct wordList {
     size_t  *positions;
     size_t  cwBegin;
     size_t  cwEnd;
+    size_t  cwCursor;
 } wordList_t;
 
 typedef struct gmst {
@@ -120,6 +121,7 @@ void setupNextWord(wordList_t *words)
     wBegin = wBegin % 2 == 0 ? wBegin : wBegin -1;
     words->cwBegin = wBegin;
     words->cwEnd = wBegin +1;
+    words->cwCursor = 0;
 }
 
 void processGame(gmst_t *game)
