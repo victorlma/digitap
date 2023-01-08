@@ -34,6 +34,13 @@ typedef struct gmst {
     wordList_t words;
 } gmst_t ;
 
+void randomSetup()
+{
+    time_t clck = time(NULL);
+    srand(clck);
+
+}
+
 bool makeWordList(wordList_t *words)
 {
    int fdWordList = open(wordListPath, O_RDONLY);
@@ -126,8 +133,10 @@ void drawGame(gmst_t *game)
     clear();
     mvprintw(0, 20, "GAME: %c",game->ch);
 }
+
 int main(void)
 {
+    randomSetup();
     bool shouldClose = false;
 
     gmst_t  game = {
