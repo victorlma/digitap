@@ -249,7 +249,7 @@ int main(void)
 
     if(!makeWordList(&game.words)){
         printf("Could not Read Word List\n");
-        printf("Make sure a valid words.list file exists\n");
+        printf("Make sure a valid word.list file exists\n");
         return -1;
 
     }
