@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
 #include "time.h"
@@ -55,39 +56,45 @@ void randomSetup()
 
 bool makeWordList(wordList_t *words)
 {
-   int fdWordList = open(wordListPath, O_RDONLY);
-   struct stat statWordList;
-   stat(wordListPath, &statWordList);
+    int fdWordList = open(wordListPath, O_RDONLY);
+    if (fdWordList > -1)
+    {
+        struct stat statWordList;
+        stat(wordListPath, &statWordList);
 
-   words->size = statWordList.st_size;
-   words->string = malloc(words->size);
-   read(fdWordList, words->string, words->size);
-   close(fdWordList);
-   words->posSize = 1;
+        words->size = statWordList.st_size;
+        words->string = malloc(words->size);
+        read(fdWordList, words->string, words->size);
+        close(fdWordList);
+        words->posSize = 1;
 
-   for (size_t i = 0; i < words->size; ++i){
+        for (size_t i = 0; i < words->size; ++i){
 
-       if (words->string[i] == '\n'){
+            if (words->string[i] == '\n'){
 
-           words->posSize += 1;
-       }
-   }
+                words->posSize += 1;
+            }
+        }
 
-   words->positions = malloc(words->posSize*sizeof(size_t));
-   words->positions[0] = 0;
-   size_t posCursor = 1;
+        words->positions = malloc(words->posSize*sizeof(size_t));
+        words->positions[0] = 0;
+        size_t posCursor = 1;
 
-   for (size_t i = 0; i < words->size; ++i){
+        for (size_t i = 0; i < words->size; ++i){
 
-       if (words->string[i] == '\n'){
+            if (words->string[i] == '\n'){
 
-           words->positions[posCursor] = i;
-           ++posCursor;
-       }
-   }
+                words->positions[posCursor] = i;
+                ++posCursor;
+            }
+        }
 
 
-   return true;
+        return true;
+    }
+    {
+        return false;
+    }
 }
 
 int checkScrSize()
@@ -241,6 +248,9 @@ int main(void)
 
 
     if(!makeWordList(&game.words)){
+        printf("Could not Read Word List\n");
+        printf("Make sure a valid words.list file exists\n");
+        return -1;
 
     }
 
