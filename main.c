@@ -132,8 +132,8 @@ void setupNextWord(wordList_t *words)
 {
     int wBegin = rand() % words->posSize;
     wBegin = wBegin % 2 == 0 ? wBegin : wBegin -1;
-    words->cwBegin = wBegin;
-    words->cwEnd = wBegin +1;
+    words->cwBegin = words->positions[wBegin] == 0 ? words->positions[wBegin] : words->positions[wBegin] +1;
+    words->cwEnd = words->positions[wBegin +1];
     words->cwCursor = 0;
 }
 
@@ -144,6 +144,7 @@ void processGame(gmst_t *game)
     }
     if(!game->isInit){
         game->ch = 0;
+        setupNextWord(&game->words);
         game->isInit = true;
     }
     if (game->ch == '\n') {
