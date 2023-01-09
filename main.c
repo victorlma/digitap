@@ -38,6 +38,8 @@ typedef struct gmst {
     int    ch;
     modes     mode;
     bool     isInit;
+    bool     firstType;
+    bool     redoWord;
     wordList_t words;
 } gmst_t ;
 
@@ -134,21 +136,42 @@ void setupNextWord(wordList_t *words)
     wBegin = wBegin % 2 == 0 ? wBegin : wBegin -1;
     words->cwBegin = words->positions[wBegin] == 0 ? words->positions[wBegin] : words->positions[wBegin] +1;
     words->cwEnd = words->positions[wBegin +1];
-    words->cwCursor = 0;
+    words->cwCursor = words->cwBegin;
 }
 
 void processGame(gmst_t *game)
 {
     if (game->isInit){
-            game->ch = getch();
+        game->ch = getch();
+        if (game->redoWord){
+            game->redoWord = false;
+            game->words.cwCursor = game->words.cwBegin;
+        }
+        if (game->firstType) game->firstType = false;
+
+        if (game->ch == game->words.string[game->words.cwCursor]){
+            if (game->words.cwCursor == game->words.cwEnd -1){
+                game->isInit = false;
+
+            }
+            else {
+                ++game->words.cwCursor;
+                game->firstType = true;
+            }
+        }
+        else {
+            game->redoWord = true;
+        }
+
     }
     if(!game->isInit){
         game->ch = 0;
+        game->firstType = true;
         setupNextWord(&game->words);
         game->isInit = true;
+        game->redoWord = false; 
     }
     if (game->ch == '\n') {
-        game->mode = MENU;
         game->isInit = false;
     }
 }
@@ -156,7 +179,36 @@ void processGame(gmst_t *game)
 void drawGame(gmst_t *game)
 {
     clear();
-    mvprintw(0, 20, "GAME: %c",game->ch);
+    mvprintw(0, 20, "You Pressed: %c",game->ch);
+
+    int xRef = 20;
+    int xReal;
+    for (int c = game->words.cwBegin; c < game->words.cwEnd; ++c)
+    {
+        char cChar = game->words.string[c];
+        xReal = xRef + (c - game->words.cwBegin);
+        int wpCursor = game->words.cwCursor;
+
+        if (game->isInit)
+        {
+            if (c > wpCursor || (c == wpCursor && game->firstType))
+            {
+                mvprintw(1,xReal, "%c", cChar);
+            }
+            else if (c == wpCursor && game->ch != cChar)
+            {
+                pcolorword(1, xReal, WRONG,cChar);
+            }
+            else
+            {
+                pcolorword(1, xReal, CORRECT,cChar);
+            }
+        }
+        else
+        {
+            mvprintw(1,xReal, "%c", cChar);
+        }
+    }
 }
 
 int main(void)
