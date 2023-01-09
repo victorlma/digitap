@@ -35,8 +35,10 @@ typedef struct wordList {
 } wordList_t;
 
 typedef struct gmst {
-    int    ch;
-    modes     mode;
+    int     ch;
+    int     mode;
+    int     score;
+    int     tries;
     bool     isInit;
     bool     firstType;
     bool     redoWord;
@@ -152,6 +154,7 @@ void processGame(gmst_t *game)
         if (game->ch == game->words.string[game->words.cwCursor]){
             if (game->words.cwCursor == game->words.cwEnd -1){
                 game->isInit = false;
+                game->score += 100;
 
             }
             else {
@@ -160,7 +163,14 @@ void processGame(gmst_t *game)
             }
         }
         else {
-            game->redoWord = true;
+            if (game->tries > 0){
+                game->redoWord = true;
+                game->score -=25;
+                game->tries -= 1;
+            }
+            else{
+                game->isInit = false;
+            }
         }
 
     }
@@ -170,6 +180,7 @@ void processGame(gmst_t *game)
         setupNextWord(&game->words);
         game->isInit = true;
         game->redoWord = false; 
+        game->tries = 4;
     }
     if (game->ch == '\n') {
         game->isInit = false;
@@ -179,7 +190,10 @@ void processGame(gmst_t *game)
 void drawGame(gmst_t *game)
 {
     clear();
-    mvprintw(0, 20, "You Pressed: %c",game->ch);
+    mvprintw(0, 10, "You Pressed: %c",game->ch);
+    mvprintw(2, 10, "Tries Left in this Word: %d", game->tries);
+    mvprintw(4, 10, "Score: %d", game->score);
+
 
     int xRef = 20;
     int xReal;
@@ -193,15 +207,15 @@ void drawGame(gmst_t *game)
         {
             if (c > wpCursor || (c == wpCursor && game->firstType))
             {
-                mvprintw(1,xReal, "%c", cChar);
+                mvprintw(5, xReal, "%c", cChar);
             }
             else if (c == wpCursor && game->ch != cChar)
             {
-                pcolorword(1, xReal, WRONG,cChar);
+                pcolorword(5, xReal, WRONG,cChar);
             }
             else
             {
-                pcolorword(1, xReal, CORRECT,cChar);
+                pcolorword(5, xReal, CORRECT,cChar);
             }
         }
         else
