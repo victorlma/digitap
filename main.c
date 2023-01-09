@@ -7,10 +7,11 @@
 #include "sys/stat.h"
 
 #define minX    40
-#define minY    20
+#define minY    10
 #define wordListPath    "word.list"
 
 int    winX, winY;
+int    centerX, centerY;
 
 typedef enum {
     MENU,
@@ -92,10 +93,12 @@ bool makeWordList(wordList_t *words)
 int checkScrSize()
 {
         getmaxyx(stdscr, winY,winX);
+        centerX = winX/2;
+        centerY = winY/2;
         if (winX < minX || winY < minY)
         {
             clear();
-            mvprintw(0, 0, "min scr size: %d x %d",minX, minY);
+            mvprintw(0+centerY, 0+centerX-10, "min scr size: %d x %d",minX, minY);
             return false;
         }
 
@@ -128,7 +131,7 @@ void processMenu(gmst_t *game)
 void drawMenu()
 {
     clear();
-    mvprintw(0, 20,"Press ENTER to Begin");
+    mvprintw(0+centerY, centerX-10,"Press ENTER to Begin");
 }
 
 
@@ -190,12 +193,12 @@ void processGame(gmst_t *game)
 void drawGame(gmst_t *game)
 {
     clear();
-    mvprintw(0, 10, "You Pressed: %c",game->ch);
-    mvprintw(2, 10, "Tries Left in this Word: %d", game->tries);
-    mvprintw(4, 10, "Score: %d", game->score);
+    mvprintw(0+centerY-4, 0+centerX-14, "You Pressed: %c",game->ch);
+    mvprintw(2+centerY-4, 0+centerX-14, "Tries Left in this Word: %d", game->tries);
+    mvprintw(4+centerY-4, 0+centerX-14, "Score: %d", game->score);
 
 
-    int xRef = 20;
+    int xRef = -(game->words.cwEnd - game->words.cwBegin)/2;
     int xReal;
     for (int c = game->words.cwBegin; c < game->words.cwEnd; ++c)
     {
@@ -207,20 +210,20 @@ void drawGame(gmst_t *game)
         {
             if (c > wpCursor || (c == wpCursor && game->firstType))
             {
-                mvprintw(5, xReal, "%c", cChar);
+                mvprintw(7+centerY-4, xReal+centerX, "%c", cChar);
             }
             else if (c == wpCursor && game->ch != cChar)
             {
-                pcolorword(5, xReal, WRONG,cChar);
+                pcolorword(7+centerY-4, xReal+centerX, WRONG,cChar);
             }
             else
             {
-                pcolorword(5, xReal, CORRECT,cChar);
+                pcolorword(7+centerY-4, xReal+centerX, CORRECT,cChar);
             }
         }
         else
         {
-            mvprintw(1,xReal, "%c", cChar);
+            mvprintw(7+centerY-4,xReal+centerX-10, "%c", cChar);
         }
     }
 }
@@ -272,6 +275,7 @@ int main(void)
                     break;
             }
         }
+        curs_set(0);
         refresh();
     }
     endwin();
