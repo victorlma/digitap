@@ -244,6 +244,7 @@ int main(void)
     initscr();
     cbreak();
     noecho();
+    raw();
     start_color();
     init_pair(CORRECT, COLOR_GREEN, COLOR_BLACK);
     init_pair(WRONG, COLOR_RED, COLOR_BLACK);
