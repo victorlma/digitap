@@ -18,6 +18,12 @@ typedef enum {
     MODES_COUNT
 } modes;
 
+typedef enum {
+    CORRECT = 1,
+    WRONG,
+    PAIRS_CONT
+} pairs;
+
 typedef struct wordList {
     size_t  size;
     char    *string;
@@ -93,6 +99,13 @@ int checkScrSize()
 }
 
 
+void pcolorword(int y, int x, int color, char *word)
+{
+    attron(COLOR_PAIR(color));
+    mvprintw(y, x,"%s",word);
+    attroff(COLOR_PAIR(color));
+}
+
 void processMenu(gmst_t *game)
 {
     if (game->isInit){
@@ -164,6 +177,11 @@ int main(void)
     initscr();
     cbreak();
     noecho();
+    start_color();
+    init_pair(CORRECT, COLOR_GREEN, COLOR_WHITE);
+    init_pair(WRONG, COLOR_RED, COLOR_WHITE);
+
+
     while(!shouldClose){
 
         if (game.ch == 27){
