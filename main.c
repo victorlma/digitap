@@ -101,11 +101,11 @@ int checkScrSize()
 }
 
 
-void pcolorword(int y, int x, int color, char *word)
+void pcolorword(int y, int x, int color, char word)
 {
-    attron(COLOR_PAIR(color));
-    mvprintw(y, x,"%s",word);
-    attroff(COLOR_PAIR(color));
+    attron(COLOR_PAIR(color)|A_BOLD|A_STANDOUT);
+    mvprintw(y, x,"%c",word);
+    attroff(COLOR_PAIR(color)|A_BOLD|A_STANDOUT);
 }
 
 void processMenu(gmst_t *game)
@@ -231,8 +231,8 @@ int main(void)
     cbreak();
     noecho();
     start_color();
-    init_pair(CORRECT, COLOR_GREEN, COLOR_WHITE);
-    init_pair(WRONG, COLOR_RED, COLOR_WHITE);
+    init_pair(CORRECT, COLOR_GREEN, COLOR_BLACK);
+    init_pair(WRONG, COLOR_RED, COLOR_BLACK);
 
 
     while(!shouldClose){
