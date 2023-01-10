@@ -189,7 +189,7 @@ void processGame(gmst_t *game)
         game->firstType = true;
         setupNextWord(&game->words);
         game->isInit = true;
-        game->redoWord = false; 
+        game->redoWord = false;
         game->tries = 4;
     }
     if (game->ch == '\n') {
