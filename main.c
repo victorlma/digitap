@@ -235,6 +235,10 @@ void drawGame(gmst_t *game)
     }
 }
 
+void cleanup(gmst_t *game){
+    free(game->words.positions);
+    free(game->words.string);
+}
 int main(void)
 {
     randomSetup();
@@ -288,6 +292,7 @@ int main(void)
         curs_set(0);
         refresh();
     }
+    cleanup(&game);
     endwin();
     return 0;
 }
