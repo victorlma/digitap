@@ -293,6 +293,7 @@ int main(void)
         refresh();
     }
     cleanup(&game);
+    curs_set(1);
     endwin();
     return 0;
 }
